@@ -1,0 +1,12 @@
+{
+  "tasks": {
+    "build": "deno --allow-env --allow-read --allow-run esbuild.mjs",
+    "release": "NODE_ENV=production deno --allow-env --allow-read --allow-run esbuild.mjs"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "esbuild": "npm:esbuild@^0.24.0",
+    "k6": "npm:k6@^0.0.0",
+    "@types/k6": "npm:@types/k6@^0.54.1"
+  }
+}
