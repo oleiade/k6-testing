@@ -1,6 +1,8 @@
 import { fail } from "k6";
 import exec from "k6/execution";
 
+import { colorize, ANSI_COLORS } from "./colors.ts";
+
 /**
  * assert is a function that checks a condition and fails the test if the condition is false.
  *
@@ -24,7 +26,8 @@ export function assert(
   if (soft) {
     // in the event of a soft assertion, we mark the test as failed
     // without interrupting the execution
-    fail(message);
+    // fail(message);
+    throw new Error(message);
   } else {
     // otherwise, we immediately abort the test
     exec.test.abort(message);
