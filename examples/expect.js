@@ -10,7 +10,7 @@ export default function () {
   // expect is a helper function built on top of assert and
   // exposes an intuitive API for expressing expectations towards
   // the code under test.
-  expect(true).toBe(true);
+  expect(true).toBe(false);
 
   // Its default execution behavior is similar to assert: if the expectation is
   // met, nothing happens and the test execution continues.
@@ -23,11 +23,11 @@ export default function () {
   // The main advantage of `expect` over `assert` is that it provides a more
   // expressive error message, which helps to understand what went wrong:
   //
-  //   ERRO[0000] test aborted: Expected value sun to be undefined
+  //  ERRO[0000] test aborted: Expected value sun to be undefined
   //
-  //   Expected: "undefined"
-  //   Received: "sun"
-  //   At: at assert (file:///Users/theocrevon/Dev/oleiade/k6-testing/assert.ts:33:20(17))
+  //  Expected: "undefined"
+  //  Received: "sun"
+  //  At: at assert (file:///Users/theocrevon/Dev/oleiade/k6-testing/assert.ts:33:20(17))
   //
   expect("sun").toBeUndefined();
 }

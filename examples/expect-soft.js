@@ -10,7 +10,7 @@ export const options = {
 export default function () {
   // soft expectations are created by chaining the `soft` method on the `expect` helper.
   // The API following the expectation remains the same as with `expect`.
-  expect.soft(true).toBe(true);
+  expect.soft(true).toBe(false);
 
   // Using `soft` turns the expectation into a soft expectation, meaning that in case of failure,
   // instead of failing the iteration and immediately exit the test execution, the iteration and test

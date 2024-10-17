@@ -1,5 +1,6 @@
 import { assert } from "./assert.ts";
 import { colorize } from "./colors.ts";
+import { check } from "k6";
 
 /**
  * The expect function is a factory function that creates an expectation object for a given value.
@@ -145,12 +146,31 @@ function createExpectation(value: unknown, isSoft: boolean): Expectation {
         at: new Error(),
       });
 
-      assert(
-        value === expected,
-        `${errorHeader}
-        ${errorContext}`,
-        isSoft
-      );
+      const errorMessage = `${errorHeader}
+      ${errorContext}`;
+
+      if (isSoft) {
+        console.log(`SOFT ASSERTION WITH CHECK`);
+        check(
+          value,
+          {
+            [`Expected value ${value} to be ${expected}`]: (value: unknown) => {
+              console.log(`is ${value} === ${expected}? ${value === expected}`);
+              value === expected;
+            },
+          },
+          { kind: "expect" }
+        );
+
+        // exec.setAbortExitCode(108);
+      } else {
+        assert(
+          value === expected,
+          `${errorHeader}
+          ${errorContext}`,
+          isSoft
+        );
+      }
     },
 
     toBeCloseTo(expected: number, precision: number = 2): void {
