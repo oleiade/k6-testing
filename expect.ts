@@ -139,16 +139,11 @@ function createExpectation(value: unknown, isSoft: boolean): Expectation {
         "red"
       );
 
-      const errorContext = createExpectationMessage(
-        createExpectationContext(value, expected, new Error())
-      );
-
-      // const errorInfo = `
-      //   Expected value: ${colorize(JSON.stringify(expected), "green")}
-      //   Received value: ${colorize(JSON.stringify(value), "red")}
-      //   At: ${colorize(new Error().stack?.split("\n")[2], "brightBlack")}
-
-      // `;
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: expected,
+        at: new Error(),
+      });
 
       assert(
         value === expected,
@@ -157,82 +152,282 @@ function createExpectation(value: unknown, isSoft: boolean): Expectation {
         isSoft
       );
     },
+
     toBeCloseTo(expected: number, precision: number = 2): void {
       const diff = Math.abs((value as number) - expected);
       const pass = diff < Math.pow(10, -precision);
+
+      const errorHeader = colorize(
+        `Expected value ${value} to be close to ${expected} with precision ${precision}, but got a difference of ${diff}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: expected,
+        at: new Error(),
+      });
+
       assert(
         pass,
-        `Expected ${value} to be close to ${expected} with precision ${precision}, but got a difference of ${diff}`,
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
+
     toBeDefined(): void {
-      assert(value !== undefined, `Expected ${value} to be defined`, isSoft);
+      const errorHeader = colorize(
+        `Expected value ${value} to be defined`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: "!= undefined",
+        at: new Error(),
+      });
+
+      assert(
+        value !== undefined,
+        `${errorHeader}
+        ${errorContext}`,
+        isSoft
+      );
     },
+
     toBeFalsy(): void {
-      assert(!value, `Expected ${value} to be falsy`, isSoft);
+      const errorHeader = colorize(
+        `Expected value ${value} to be falsy`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: "false",
+        at: new Error(),
+      });
+
+      assert(
+        !value,
+        `${errorHeader}
+        ${errorContext}`,
+        isSoft
+      );
     },
+
     toBeGreaterThan(expected: number | bigint): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to be greater than ${expected}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: `${value} > ${expected}`,
+        at: new Error(),
+      });
+
       assert(
         (value as number) > expected,
-        `Expected ${value} to be greater than ${expected}`,
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
+
     toBeGreaterThanOrEqual(expected: number | bigint): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to be greater than or equal to ${expected}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: `${value} >= ${expected}`,
+        at: new Error(),
+      });
+
       assert(
         (value as number) >= expected,
-        `Expected ${value} to be greater than or equal to ${expected}`,
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
+
     // deno-lint-ignore ban-types
     toBeInstanceOf(expected: Function): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to be an instance of ${expected}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: `instanceof ${expected}`,
+        at: new Error(),
+      });
+
       assert(
         value instanceof expected,
-        `Expected ${value} to be an instance of ${expected}`,
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
+
     toBeLessThan(expected: number | bigint): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to be less than ${expected}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: `${value} < ${expected}`,
+        at: new Error(),
+      });
+
       assert(
         (value as number) < expected,
-        `Expected ${value} to be less than ${expected}`,
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
+
     toBeLessThanOrEqual(expected: number | bigint): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to be less than or equal to ${expected}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: `${value} <= ${expected}`,
+        at: new Error(),
+      });
+
       assert(
         (value as number) <= expected,
-        `Expected ${value} to be less than or equal to ${expected}`,
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
+
     toBeNaN(): void {
-      assert(isNaN(value as number), `Expected ${value} to be NaN`, isSoft);
-    },
-    toBeNull(): void {
-      assert(value === null, `Expected ${value} to be null`, isSoft);
-    },
-    toBeTruthy(): void {
-      assert(!!value, `Expected ${value} to be truthy`, isSoft);
-    },
-    toBeUndefined(): void {
-      assert(value === undefined, `Expected ${value} to be undefined`, isSoft);
-    },
-    toEqual(expected: unknown): void {
+      const errorHeader = colorize(`Expected value ${value} to be NaN`, "red");
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: "NaN",
+        at: new Error(),
+      });
+
       assert(
-        JSON.stringify(value) === JSON.stringify(expected),
-        `Expected ${JSON.stringify(value)} to equal ${JSON.stringify(
+        isNaN(value as number),
+        `${errorHeader}
+        ${errorContext}`,
+        isSoft
+      );
+    },
+
+    toBeNull(): void {
+      const errorHeader = colorize(`Expected value ${value} to be null`, "red");
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: "null",
+        at: new Error(),
+      });
+
+      assert(
+        value === null,
+        `${errorHeader}
+        ${errorContext}`,
+        isSoft
+      );
+    },
+
+    toBeTruthy(): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to be truthy`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: "true",
+        at: new Error(),
+      });
+
+      assert(
+        !!value,
+        `${errorHeader}
+        ${errorContext}`,
+        isSoft
+      );
+    },
+
+    toBeUndefined(): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to be undefined`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: "undefined",
+        at: new Error(),
+      });
+
+      assert(
+        value === undefined,
+        `${errorHeader}
+        ${errorContext}`,
+        isSoft
+      );
+    },
+
+    toEqual(expected: unknown): void {
+      const errorHeader = colorize(
+        `Expected value ${JSON.stringify(value)} to equal ${JSON.stringify(
           expected
         )}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: expected,
+        at: new Error(),
+      });
+
+      assert(
+        JSON.stringify(value) === JSON.stringify(expected),
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
+
     toHaveLength(expected: number): void {
+      const errorHeader = colorize(
+        `Expected value ${value} to have a length of ${expected}`,
+        "red"
+      );
+
+      const errorContext = createExpectationMessage({
+        actualValue: value,
+        expectedValue: expected,
+        at: new Error(),
+      });
+
       assert(
         (value as Array<unknown>).length === expected,
-        `Expected ${value} to have a length of ${expected}`,
+        `${errorHeader}
+        ${errorContext}`,
         isSoft
       );
     },
@@ -242,24 +437,15 @@ function createExpectation(value: unknown, isSoft: boolean): Expectation {
 interface ExpectationContext {
   actualValue: unknown;
   expectedValue: unknown;
-  at: string;
-}
-
-function createExpectationContext(
-  actualValue: unknown,
-  expectedValue: unknown,
-  at: Error
-): ExpectationContext {
-  return {
-    actualValue,
-    expectedValue,
-    at: at.stack?.split("\n")[2] ?? "",
-  };
+  at?: Error;
 }
 
 function createExpectationMessage(context: ExpectationContext): string {
+  const actualValue: string = JSON.stringify(context.actualValue);
+  const expectedValue: string = JSON.stringify(context.expectedValue);
+
   return `
-  Expected: ${colorize(JSON.stringify(context.expectedValue), "green")}
-  Received: ${colorize(JSON.stringify(context.actualValue), "red")}
+  Expected: ${colorize(expectedValue, "green")}
+  Received: ${colorize(actualValue, "red")}
   At:`;
 }
