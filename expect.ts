@@ -146,31 +146,12 @@ function createExpectation(value: unknown, isSoft: boolean): Expectation {
         at: new Error(),
       });
 
-      const errorMessage = `${errorHeader}
-      ${errorContext}`;
-
-      if (isSoft) {
-        console.log(`SOFT ASSERTION WITH CHECK`);
-        check(
-          value,
-          {
-            [`Expected value ${value} to be ${expected}`]: (value: unknown) => {
-              console.log(`is ${value} === ${expected}? ${value === expected}`);
-              value === expected;
-            },
-          },
-          { kind: "expect" }
-        );
-
-        // exec.setAbortExitCode(108);
-      } else {
-        assert(
-          value === expected,
-          `${errorHeader}
+      assert(
+        value === expected,
+        `${errorHeader}
           ${errorContext}`,
-          isSoft
-        );
-      }
+        isSoft
+      );
     },
 
     toBeCloseTo(expected: number, precision: number = 2): void {
