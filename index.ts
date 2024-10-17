@@ -1,2 +1,2 @@
-export { assert } from "./assert";
-export { expect } from "./expect";
+export { assert, assertEquals } from "./assert.ts";
+export { expect } from "./expect.ts";
