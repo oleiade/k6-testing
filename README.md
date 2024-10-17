@@ -31,7 +31,7 @@ deno task build
 `assertEquals(lhs: unknown, rhs: unknown, message: string, soft?: boolean): void`: checks if two values are equal and fails the test if they are not. If the `soft` option is true, the assertion will mark the test as failed without interrupting the execution.
 
 ```javascript
-import { assert, assertEquals } from "../dist/index.js";
+import { assert, assertEquals } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
 
 export const options = {
   // Make k6 run 3 test iterations to illustrate the test
@@ -79,7 +79,7 @@ export default function () {
 ##### Example
 
 ```javascript
-import { expect } from "../dist/index.js";
+import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
 
 export const options = {
   // Make k6 run 3 test iterations to illustrate the test
@@ -119,7 +119,7 @@ export default function () {
 The `expect` function can also be used to create soft expectations, which will not interrupt the test execution when the expectation is not met. To create a soft expectation, chain the `soft(value: unknown)` method to the expectation object, and use [matchers](#matchers) as usual:
 
 ```javascript
-import { expect } from "../dist/index.js";
+import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
 
 export const options = {
   // Make k6 run 3 test iterations to illustrate that soft expectations
