@@ -1,147 +1,125 @@
 # k6-testing
 
-**!! this is a prototype, that's definetly not ready for production use !!**
+A seamless way to write functional tests in k6 with Playwright-compatible assertions.
 
-Functional testing primitives for k6
+> ⚠️ **Note**: This is a prototype project demonstrating the concept. Not yet ready for production use.
 
-## Overview
+## Why k6-testing?
 
-`k6-testing` is a functional testing library for [k6](https://k6.io/), designed to provide a familiar API for performing assertions in your test scripts. This library allows you to interrupt the execution immediately when things go wrong, ensuring that your tests fail fast and provide clear feedback.
+- **✨ Write once, run anywhere**: Copy-paste your Playwright test assertions directly into k6 - they'll work out of the box
+- **🎯 Fail fast**: Tests interrupt immediately when assertions fail, giving you quick, clear feedback
+- **🔄 Progressive API**: Start simple with `assert`, scale up to expressive `expect` assertions as your needs grow
+- **🎭 Familiar API**: Familiar API for anyone coming from Playwright, Deno, or Vite ecosystem
+- **🔍 Clear error messages**: Get detailed, actionable feedback when tests fail
+
+## Installation
+
+```sh
+deno task build
+```
+
+## Quick Start
+
+```javascript
+import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
+
+export default function () {
+  // Simple assertions
+  expect(response.status).toBe(200);
+  
+  // Async assertions with retry (perfect for UI testing)
+  await expect(page.locator('.submit-button')).toBeEnabled();
+  
+  // Soft assertions - continue testing even after failures
+  expect.soft(data.userId).toBeDefined();
+}
+```
 
 ## Features
 
-- **Assertions**: Perform various assertions to validate your test conditions.
-- **Immediate Execution Interruption**: Fail fast by interrupting the test execution immediately when an assertion fails.
-- **Familiar API**: Use a familiar API for assertions, making it easy to write and maintain tests.
+### 1. Playwright-Compatible Expectations
 
-## Using
-
-To produce a javascript bundle, importable from a k6 script, use the following command:
-
-```sh
-deno task build 
-```
-
-## API
-
-### Assert
-
-`assert(condition: boolean, message: string): void` checks a condition and fails the test if the condition is false. 
-
-`assertEquals(lhs: unknown, rhs: unknown, message: string, soft?: boolean): void`: checks if two values are equal and fails the test if they are not. If the `soft` option is true, the assertion will mark the test as failed without interrupting the execution.
+Use the same assertions you know from Playwright:
 
 ```javascript
-import { assert, assertEquals } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
-
-export const options = {
-  // Make k6 run 3 test iterations to illustrate the test
-  // immediate failure, and the test execution stops.
-  iterations: 3,
-};
-
-export default function () {
-  // Assert enables users to assert a given condition statement is true.
-  assert(true === true, "true is expected to remain true");
-
-  // assertEquals is a helper function built on top of assert and
-  // asserts the equality of two values.
-  assertEquals(1, 1, "1 is expected to equal 1");
-
-  // If the condition is true, nothing happens and the test execution continues.
-  assert(1 === 1, "1 is expected to remain 1");
-
-  // If the condition is false, an error is thrown, the iteration is stopped, the
-  // test execution stops, and the whole test is marked as failed, returning the
-  // exit code 108.
-  assert("sun" === "moon", "sun is expected to be moon");
-  assertEquals("sun", "moon", "sun is expected to be moon");
-}
+// These Playwright assertions work exactly the same in k6
+await expect(page.locator('.button')).toBeVisible();
+await expect(page.locator('input')).toHaveValue('test');
 ```
 
-### Expect
+### 2. Retrying Assertions
 
-#### Hard expectation
+Perfect for UI testing, these assertions automatically retry until they pass or timeout:
 
-`expect(value: unknown): Expectation` creates an expectation object for the given value. Which can then be chained with any of the following matchers:
+| Assertion            | Description                |
+|----------------------|----------------------------|
+| `toBeChecked()`      | Element is checked         |
+| `toBeDisabled()`     | Element is disabled        |
+| `toBeEditable()`     | Element is editable        |
+| `toBeEnabled()`      | Element is enabled         |
+| `toBeHidden()`       | Element is hidden          |
+| `toBeVisible()`      | Element is visible         |
+| `toHaveValue(value)` | Element has specific value |
 
-##### Matchers
+### 3. Standard Assertions
 
-| Matcher                                                                             | Description                                                                   |
-|-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| `toBe(expected: unknown, soft: boolean = false): void`                              | asserts that the value is equal to the expected value.                        |
-| `toBeCloseTo(expected: number, precision: number = 2, soft: boolean = false): void` | asserts that the value is close to the expected value with a given precision. |
-| `toEqual(expected: unknown, soft: boolean = false): void`                           | asserts that the value is equal to the expected value.                        |
-| `toBeTruthy(soft: boolean = false): void`                                           | asserts that the value is truthy.                                             |
-| `toBeFalsy(soft: boolean = false): void`                                            | asserts that the value is falsy.                                              |
-| `toBeGreaterThan(expected: number, soft: boolean = false): void`                    | asserts that the value is greater than the expected value.                    |
-| `toBeLessThan(expected: number, soft: boolean = false): void`                       | asserts that the value is less than the expected value.                       |
+For immediate validation without retry:
 
-##### Example
+| Assertion                         | Description                      |
+|-----------------------------------|----------------------------------|
+| `toBe(expected)`                  | Strict equality comparison       |
+| `toEqual(expected)`               | Deep equality comparison         |
+| `toBeCloseTo(number, precision?)` | Number comparison with precision |
+| `toBeTruthy()`                    | Truthy value check               |
+| `toBeFalsy()`                     | Falsy value check                |
+| `toBeGreaterThan(number)`         | Greater than comparison          |
+| `toBeLessThan(number)`            | Less than comparison             |
+
+### 4. Soft Assertions
+
+Keep tests running even after failures - perfect for collecting multiple failures in one run:
 
 ```javascript
-import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
-
-export const options = {
-  // Make k6 run 3 test iterations to illustrate the test
-  // immediate failure, and the test execution stops.
-  iterations: 3,
-};
-
-export default function () {
-  // expect is a helper function built on top of assert and
-  // exposes an intuitive API for expressing expectations towards
-  // the code under test.
-  expect(true).toBe(true);
-
-  // Its default execution behavior is similar to assert: if the expectation is
-  // met, nothing happens and the test execution continues.
-  expect(10).toBeCloseTo(10.2, 0.1);
-
-  // If the expectation is not met, an error is thrown, the iteration is stopped,
-  // the test execution stops, and the whole test is marked as failed, returning
-  // the exit code 108.
-  //
-  // The main advantage of `expect` over `assert` is that it provides a more
-  // expressive error message, which helps to understand what went wrong:
-  //
-  //   ERRO[0000] test aborted: Expected value sun to be undefined
-  //
-  //   Expected: "undefined"
-  //   Received: "sun"
-  //   At: at assert (file:///Users/theocrevon/Dev/oleiade/k6-testing/assert.ts:33:20(17))
-  //
-  expect("sun").toBeUndefined();
-}
+// Test continues even if assertions fail
+expect.soft(response.status).toBe(200);
+expect.soft(data.items).toHaveLength(5);
 ```
 
-#### Soft expectation
+### 5. Basic Assertions
 
-The `expect` function can also be used to create soft expectations, which will not interrupt the test execution when the expectation is not met. To create a soft expectation, chain the `soft(value: unknown)` method to the expectation object, and use [matchers](#matchers) as usual:
+Low-level assertions for simple cases:
 
 ```javascript
-import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
+import { assert, assertEquals } from "k6-testing";
 
-export const options = {
-  // Make k6 run 3 test iterations to illustrate that soft expectations
-  // do not stop the test execution, but rather mark iterations and the test as failed, but
-  // continue the test execution.
-  iterations: 1,
-};
-
-export default function () {
-  // soft expectations are created by chaining the `soft` method on the `expect` helper.
-  // The API following the expectation remains the same as with `expect`.
-  expect.soft(true).toBe(true);
-
-  // Using `soft` turns the expectation into a soft expectation, meaning that in case of failure,
-  // instead of failing the iteration and immediately exit the test execution, the iteration and test
-  // will be marked as failed, but the test execution will keep going on.
-  expect.soft("sun").toBeUndefined();
-
-  // It means the following expectation will be executed, despite the previous one failing.
-  expect.soft(10).toBeCloseTo(10.2, 0.1);
-
-  // This expecation will be executed as well, despite the previous one failing.
-  expect.soft(1).toEqual(2);
-}
+assert(condition, "error message");
+assertEquals(actual, expected, "error message");
 ```
+
+## Progressive Testing Approach
+
+k6-testing offers multiple layers of assertion capabilities:
+
+1. **Basic**: Start with simple `assert()` for straightforward checks
+2. **Standard**: Use `expect()` for more expressive assertions
+3. **Advanced**: Leverage retrying assertions for robust UI testing
+4. **Comprehensive**: Combine with soft assertions for thorough test coverage
+
+## Error Handling
+
+Get clear, actionable error messages:
+
+```javascript
+expect(value).toBe(expected);
+// Error: Expected value to be undefined
+//   Expected: undefined
+//   Received: "actual value"
+```
+
+## Contributing
+
+Contributions are welcome! Check out our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## License
+
+[MIT License](LICENSE)
