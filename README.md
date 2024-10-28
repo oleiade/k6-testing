@@ -35,6 +35,16 @@ export default function () {
 }
 ```
 
+For functional testing, metrics and performance are most likely irrelevant, and we recommend executing k6 functional tests in headless mode:
+
+```sh
+# Run k6 in headless mode
+k6 run --no-summary --quiet examples/browser.js
+
+# If any assertion/expectation fail, a non-zero exit code will be returned
+echo $status
+```
+
 ## Features
 
 ### 1. Playwright-Compatible Expectations
@@ -47,9 +57,11 @@ await expect(page.locator('.button')).toBeVisible();
 await expect(page.locator('input')).toHaveValue('test');
 ```
 
-### 2. Retrying Assertions
+### 2. Auto-Retrying Assertions
 
-Perfect for UI testing, these assertions automatically retry until they pass or timeout:
+
+Perfect for UI testing, these assertions will retry until the assertion passes, or the assertion timeout is reached. Note that retrying assertions are async, so you must await them.
+By default, the timeout for assertions is set to 5 seconds, and the polling interval is set to 100 milliseconds. 
 
 | Assertion            | Description                |
 |----------------------|----------------------------|
@@ -61,9 +73,15 @@ Perfect for UI testing, these assertions automatically retry until they pass or 
 | `toBeVisible()`      | Element is visible         |
 | `toHaveValue(value)` | Element has specific value |
 
+You can customize these values by passing an options object as the second argument to the assertion function:
+  
+  ```javascript
+  await expect(page.locator('.button')).toBeVisible({ timeout: 10000, interval: 500 });
+  ```
+
 ### 3. Standard Assertions
 
-For immediate validation without retry:
+These assertions allow to test any conditions, but do not auto-retry.
 
 | Assertion                         | Description                      |
 |-----------------------------------|----------------------------------|
