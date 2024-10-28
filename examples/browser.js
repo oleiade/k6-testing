@@ -1,4 +1,4 @@
-import { expect } from "../dist/index.js";
+import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.2.0/index.js";
 import { browser } from "k6/browser";
 
 export const options = {

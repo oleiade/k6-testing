@@ -1,4 +1,4 @@
-import { expect } from "../dist/index.js";
+import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.2.0/index.js";
 
 export const options = {
   // Make k6 run 3 test iterations to illustrate the test
