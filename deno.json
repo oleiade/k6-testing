@@ -1,4 +1,6 @@
 {
+  "name": "k6-testing",
+  "version": "0.2.0",
   "tasks": {
     "build": "deno --allow-env --allow-read --allow-run esbuild.mjs",
     "release": "NODE_ENV=production deno --allow-env --allow-read --allow-run esbuild.mjs"
