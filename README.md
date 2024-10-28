@@ -21,7 +21,7 @@ deno task build
 ## Quick Start
 
 ```javascript
-import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.1.0/index.js";
+import { expect } from "https://github.com/oleiade/k6-testing/releases/download/v0.2.0/index.js";
 
 export default function () {
   // Simple assertions
